@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  .pagination{display:flex;}
+  .pagination div{
+    min-width:30px;
+    padding:5px;
+    border:solid 1px;
+    border-radius:5px;
+    text-align:center;
+    cursor:pointer;
+  }
+  .pagination div:hover{
+    background:skyblue;
+  }
+
+  #movie-title{
+    display:flex;
+    flex-wrap:wrap;
+  }
+  #movie-title > div{
+    min-width:200px;
+    max-width:200px;
+    text-overflow:ellipsis;
+    min-height:100px;
+    background:gainsboro;
+    margin:0px 1px 1px 0px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  #movie-title > div img{
+    max-width:100%;
+  }
+</style>
+  <h1>index</h1>
+  <div id="movie-box">
+    
+  </div>
+  <button id="movie-btn">영화데이터</button>
+
+
+  <button id="data-btn">데이터받기</button>
+
+  <div class="pagination">
+    <div>1</div>
+    <div>2</div>
+    <div>3</div> 
+    <div>4</div>
+    <div>5</div>
+    <div>6</div>
+    <div>7</div>
+  </div>
+  <div id="data-value"></div>
+
+{% endblock content %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    const dataBtn = document.querySelector('#data-btn');
+    const dataValue = document.querySelector('#data-value');
+    const movieBtn = document.querySelector('#movie-btn');
+    const movieTitle = document.querySelector('#movie-title');
+
+   
+    window.onload = function() {
+      console.log('@@@@@@@@llload')
+      getMovies();
+    }
+
+
+    dataBtn.addEventListener('click', function (event) {
+      event.preventDefault();
+      axios({
+        method: 'get', 
+        url: '/movies/data/'
+      })
+      .then((response) => {
+        console.log(response.data.movies['일']);
+        dataValue.innerText = response.data.movies['삼'];
+      });
+    })
+    
+    const btn2 = document.querySelector('#btn2');
+    const btns = document.querySelectorAll('.pagination div');
+
+
+    function getMovies(event){
+      const API_KEY = `30b3f55a2d2aa951c4ef256c10f8cef9`;
+
+      
+      let pageNumber = event?event.target.innerText:1;
+      axios({
+        method:'get',
+        url:`https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=ko-KR&page=${pageNumber}`
+      })
+      .then(res=>{
+        if (document.querySelector("#movie-title")) {
+          document.querySelector("#movie-title").remove()
+        }
+        const movies = res.data.results;
+        const movieBox = document.querySelector("#movie-box")
+        const movieTitle = document.createElement("div");
+        movieTitle.setAttribute('id', 'movie-title')
+        movieBox.appendChild(movieTitle);
+        
+        movies.forEach((movie,index)=>{
+          const newDiv = document.createElement("div");
+          const changeIndex = (pageNumber * 20) - 20;
+          const POSTER_URL = `https://image.tmdb.org/t/p/w500` + movie.poster_path;
+          const imgElement = document.createElement("img");
+          imgElement.setAttribute('src',POSTER_URL);
+          
+          newDiv.innerText = `${changeIndex + index+1} : ${movie.title}`;
+          newDiv.append(imgElement);
+          movieTitle.appendChild(newDiv);
+        });
+      });
+    }
+    movieBtn.addEventListener('click', getMovies);
+
+    btns.forEach((btn) => {
+      console.log('@@@@@@@@@@',btn)
+      btn.addEventListener('click', getMovies);
+    })
+  </script>
+
+{% endblock script %}

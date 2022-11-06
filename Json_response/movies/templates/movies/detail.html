@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>detail</h1>
+  <p>{{ movie.title }}</p>
+  <p>{{ movie.description }}</p>
+  <hr>
+  {% for comment in comments %}
+    <div style="display: flex;">
+      <div>{{ comment.user }}
+        :
+        {{ comment.content }}</div>
+      {% if request.user == comment.user %}
+        <form style="margin-left: 10px;" action="{% url 'movies:comment_delete' movie.pk comment.pk %}" method="POST">
+          {% csrf_token %}
+          <input type="submit" value="삭제">
+        </form>
+      {% endif %}
+    </div>
+    {% empty %}
+    <span>댓글이 없음 ㅋ</span>
+  {% endfor %}
+  <hr>
+  <form action="{% url 'movies:comment' movie.pk %}" method="POST">
+    {% csrf_token %}
+    {{ form }}
+      <input type="submit" value="댓글달기">
+    </form>
+
+    <a href="{% url 'movies:index' %}">뒤로가기</a>
+    <a href="{% url 'movies:update' movie.pk %}">수정하기</a>
+    <form action="{% url 'movies:delete' movie.pk %}" method="POST">
+      {% csrf_token %}
+      <input type="submit" value="삭제하기">
+    </form>
+  {% endblock content %}
