@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script>
+    // Promise(약속)=> 뭔가 정해진 약속이잇음.(그게 설계도(또는 계약서같은)가 있다보면됨 어떻게약속한지)
+	// 그리고 그 계약에 문제가 없이 성공하면 resolve처리함
+	// 그리고 그 계약에 문제가 생겨 실패하면 reject처리함
+
+	// 코드적으로 Promise는 그래서 함수를 갖고있는데 인자 두개
+	// resolve,reject가있고 실행하면 resolve또는 reject할수있음.
+	const promise = new Promise((resolve, reject) => {
+		//여기서무슨 일이일어나던  1년짜리든 1초짜리든 몇초짜리든
+		setTimeout(() => {
+			resolve("성공");
+		}, 1000);
+		reject("실패");
+	});
+
+	console.log(promise);
+	promise
+		.then(result => {
+			console.log("성공", result); //다음처리가 불가능함
+		})
+		.catch(result => {
+			console.log("실패", result);
+		});
+  </script>
+</head>
+<body>
+  
+</body>
+</html>
