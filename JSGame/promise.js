@@ -142,22 +142,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 	});
 	//
 
-	function 오를더하세요() {
-		count += 5;
-	}
+	// function 오를더하세요() {
+	// 	count += 5;
+	// }
 
-	function wait(action, callback) {
-		setTimeout(() => {
-			action();
-			callback("test");
-		}, 1000);
+	// function wait(action, callback) {
+	// 	setTimeout(() => {
+	// 		action();
+	// 		callback("test");
+	// 	}, 1000);
 
-		return {
-			then: function (callback) {
-				callback(123);
-			},
-		};
-	}
+	// 	return {
+	// 		then: function (callback) {
+	// 			callback(123);
+	// 		},
+	// 	};
+	// }
 
 	// function Nongbu(options) {
 

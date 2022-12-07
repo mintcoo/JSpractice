@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<script>
+			document.addEventListener("DOMContentLoaded", () => onLoadedDom());
+			async function onLoadedDom() {
+				//body안에 내용 뒤에있는 값으로 바꿈.
+				document.querySelector("body").innerHTML = "<div>이미지로딩중</div>";
+				const img = new Image(); //이미지 객체 생성
+				//img.src = "data:image/jpeg;base64,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" ; //code.jpg라는 이미지 파일을 로딩 시작
+				// img.src = "./01.png";
+				const imageLoaded = () => {
+					console.log("로드됨");
+				};
+				const imageLoadPromise = new Promise((resolve, reject) => {
+					img.src = "https://t1.daumcdn.net/cfile/tistory/2556524156846ED42C";
+					img.onload = function () {
+						resolve(1);
+					};
+				});
+
+				// 1.Promise Pattern
+				// imageLoadPromise
+				// 	.then(abc => {
+				// 		console.log("first result", abc);
+				// 		const promise = new Promise((resolve, rej) => {
+				// 			resolve(abc+3);
+				// 		});
+				// 		return promise;
+				// 	})
+				// 	.then(aaa => {
+				// 		console.log("정답은", aaa);
+				// 	});
+
+				// 2. async/await pattern
+				const imageLoadClear = await imageLoadPromise;
+				console.log("로딩후에 뜨냐?", imageLoadClear); // 1
+        const promise = new Promise((resolve, rej) => {
+          resolve(imageLoadClear+3);
+        });        
+        const newPromise = await promise;
+        console.log(newPromise);//<<--
+
+				document.querySelector(
+					"body"
+				).innerHTML = `<img src="https://t1.daumcdn.net/cfile/tistory/2556524156846ED42C" />`;
+
+				// imageLoadPromise
+				// .then(response => {
+				// 	document.querySelector("body").innerHTML = `<img src="https://t1.daumcdn.net/cfile/tistory/2556524156846ED42C" />`;
+				// 	console.log("22", response);
+				// });
+				// img.onload = function () {
+				// 	//로그가 다되면 불리는곳;
+				// 	// document.querySelector("body").innerHTML = `<img src="https://t1.daumcdn.net/cfile/tistory/2556524156846ED42C" />`;
+				// };
+
+				// const imgdraw = await img;
+				// const imageLoaded = (imgdraw) => {
+				//   console.log('로드됨');
+				// }
+				// await imageLoaded();
+				// console.log('로드됨');
+			}
+		</script>
+	</head>
+	<body>
+		<!-- <img src="https://t1.daumcdn.net/cfile/tistory/2556524156846ED42C" /> -->
+	</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<script>
+			document.addEventListener("DOMContentLoaded", async () => {
+				// //문제 1번
+				// // timer function을 만드세요.
+				const timer = function () {
+					console.log("2번째 이미지 시작");
+					return new Promise(function (resolve, reject) {
+						setTimeout(() => {
+							console.log("1초경과했음");
+							resolve();
+						}, 1000);
+					});
+				};
+
+				// console.log('[1]시작했습니다. 1초뒤 다음 콘솔이 찍힙니다.');
+				// await timer(); // 1초쉬고 타이머안에서 [3]1초경과 찍어야함
+				// console.log('[4]완료');
+
+				//문제 2번
+				/****
+				 * 이미지1) https://t1.daumcdn.net/cfile/tistory/2556524156846ED42C
+				 * 이미지2) https://t1.daumcdn.net/cfile/tistory/273A4F395825C23218
+				 *
+				 */
+				// const imgLoaded = new Image();
+				// const imgLoaded2 = new Image();
+
+				// imgLoaded.src = `https://t1.daumcdn.net/cfile/tistory/2556524156846ED42C`;//10초
+				// imgLoaded2.src = ` https://t1.daumcdn.net/cfile/tistory/273A4F395825C23218`;//1초
+				// const imgLoadClear = function() {
+				//   return new Promise((resolve, reject) => {
+				//     imgLoaded.onload = function() {
+				//       console.log('이미지로딩완료');
+				//     }
+				//     imgLoaded2.onload = function() {
+				//       console.log('이미지로딩완료2');
+				//     }
+				//     resolve();
+				//   })
+				// };
+				// const promise1 = new Promise((resolve, reject) => {
+				//     imgLoaded.onload = function() {
+				//       console.log('이미지로딩완료');
+				//       resolve();
+				//     };
+				// })
+				// const promise2 = new Promise((resolve, reject) => {
+				//     imgLoaded2.onload = function() {
+				//       console.log('이미지로딩완료2');
+				//       resolve();
+				//     };
+				// })
+
+				const loadImage = imageLink => {
+					const imgLoaded = new Image();
+					return new Promise((resolve, reject) => {
+						imgLoaded.src = imageLink;
+						imgLoaded.onload = function () {
+							console.log("이미지로딩완료");
+							resolve();
+						};
+					});
+				};
+
+				// await promise1; //5초
+				// await promise2; //10초
+
+				// await loadImage('https://t1.daumcdn.net/cfile/tistory/2556524156846ED42C')
+				// await loadImage('https://t1.daumcdn.net/cfile/tistory/273A4F395825C23218')
+				await Promise.all([
+					loadImage("https://t1.daumcdn.net/cfile/tistory/2556524156846ED42C"),
+					loadImage("https://t1.daumcdn.net/cfile/tistory/273A4F395825C23218"),
+				]);
+
+				// const result = await Promise.all([promise1,promise2,promise3,promise4]);
+				//result =>  [promise1결과,2의결과,3의결과...];
+
+				//10초가되게하는방법이있어
+
+				//여기까지 도달하는데 걸리는 시간은 몇초일까?
+
+				document.querySelector(
+					"body"
+				).innerHTML = `<img src = "https://t1.daumcdn.net/cfile/tistory/2556524156846ED42C" />`;
+				await timer();
+				document
+					.querySelector("body")
+					.insertAdjacentHTML(
+						"beforeend",
+						`<img src = " https://t1.daumcdn.net/cfile/tistory/273A4F395825C23218" />`
+					);
+
+				//여기 시작할떄가 0초면
+				// 이미지1로드 //이거 로드 시간(0)이 5초면
+				// await timer();//1초기다리잔음
+				// 이미지2로드
+				// 여기끝날떄는 1초여야함. 흐른시간
+				// 단 조건부로 이미지는 로딩없이 한방에 그려져야한다.
+			});
+		</script>
+	</head>
+	<body></body>
+</html>
