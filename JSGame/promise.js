@@ -65,15 +65,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 					setTimeout(() => {
 						res.value += 5;
 						console.log("[3]여기선 12떠야함->", res.value);
-						resolve(res);
+						resolve(res.value);
 					}, 2000);
 				});
 			})
 			.then(res => {
-				console.log("EEEEEEE", res);
+				console.log("EEEEEEEss", res);
 				setTimeout(() => {
-					res.value += 5;
-					console.log("[4]여기선 17떠야함->", res.value);
+					res += 5;
+					console.log("[4]여기선 17떠야함->", res);
 				}, 50);
 			})
 			// promise2.then(res => {
@@ -114,9 +114,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 	// .then(response=>{
 	//   console.log(response.name);
 	// });
+	const ttest = async function() {
+		return 1;
+	}
+	console.log('test', ttest());
+	ttest().then(alert);
 
 	const result = await promise;
 	console.log("result", result);
+	console.log('!@#!@#', result.name);
 
 	promise.then(result => {});
 
