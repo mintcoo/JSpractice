@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 	const context = canvasElement.getContext("2d");
 
 	const imgSrc1 = "./01.png";
-	const imgSrc2 = "./cloud.png";
+	const cloudImgSrc = ["./cloud.png", "./cloud2.png"];
 
 	const getImage = function (imgSrc) {
 		return new Promise((resolve, reject) => {
@@ -23,18 +23,34 @@ document.addEventListener("DOMContentLoaded", async () => {
 	// const [a, b, c] = [1, 2, 3];
 	// const { name, height } = { name: 1, height: 3 };
 
-	const [backgroundImage, cloudImage, missileImage, pinkImage] = await Promise.all([
-		getImage(imgSrc1),
-		getImage(imgSrc2),
-		getImage("./missile.png"),
-		getImage("./pink.png"),
-	]);
+	const cloudOnLoadImagesPromises = cloudImgSrc.map(cloud => {
+		return getImage(cloud);
+	});
+	const [backgroundImage, missileImage, pinkImage, ...cloudImages] =
+		await Promise.all([
+			getImage(imgSrc1),
+			getImage("./missile.png"),
+			getImage("./pink.png"),
+			...cloudOnLoadImagesPromises,
+		]);
+
+	// const a = [1, 2, 3];
+	// const b = [4, 5, 6];
+	// const c = [...a,...b];
+	// const ab = a.concat(b);
+	// // console.log('c',c);
+	// console.log('12',cloudtest);
+
+	// const cloudImage = await getImage(cloudImgSrc);
+
+	// const cloudrealtest = await Promise.all(cloudtest)
+	// console.log('22',cloudrealtest[0]);
 
 	const backWidth = backgroundImage.width;
 	const backHeight = backgroundImage.height;
 
-	const cloudWidth = cloudImage.width;
-	const cloudHeight = cloudImage.height;
+	const cloudWidth = cloudImages[0].width;
+	const cloudHeight = cloudImages[0].height;
 	const cloudDrawWidth = 80;
 	const cloudDrawHeigth = 50;
 
@@ -82,27 +98,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 		}
 	});
 
-	function Cloud() {
-		const random = Math.random() * 10; // 0.0~ 0.9999999999 0.xxx~9.9999999999999
-		return {
-			id: createUniqueId(),
-			speed: random,
-			image: cloudImage,
-			hp: 3,
-			x: 0,
-			y: 0,
-			height: cloudWidth,
-			width: cloudHeight,
-			draw: {
-				width: cloudDrawWidth,
-				height: cloudDrawHeigth,
-			},
-		};
-	}
+	
+	const cloudDummy = {
+		width: cloudWidth,
+		height: cloudHeight,
+		draw: {
+			width: cloudDrawWidth,
+			height: cloudDrawHeigth,
+		},
+	};
+	const clouds = [new Cloud(cloudImages, cloudDummy)];
+	const cloudsLength = Array.from({ length: 5 }, (v, i) => i);
+	cloudsLength.forEach(() => {
+		clouds.push(new Cloud(cloudImages, cloudDummy));
+	});
 
-	const clouds = [new Cloud()];
 	const player = new Player();
 	const missiles = [];
+	let elapsedTime = 0;
 
 	function Player() {
 		return {
@@ -111,6 +124,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 			y: 0,
 			width: 30,
 			height: 30,
+			lastFiredTime: 0,
 		};
 	}
 
@@ -143,6 +157,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 	}
 
 	function update() {
+		elapsedTime += 60;
 		context.clearRect(0, 0, backWidth, backHeight);
 		drawBackground();
 		drawCloud(context, clouds);
@@ -153,9 +168,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 		update();
 	}, 1000 / 60);
 
+	let shootCoolTime = 1800;
 
 	function drawPlayer(context, target) {
-		const { x, y, width, height, speed } = target;
+		const { x, y, width, height, speed, lastFiredTime } = target;
 		//원래 검은색이었
 		context.save();
 		context.fillStyle = "#ffc";
@@ -176,7 +192,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 		}
 
 		if (keyboard.space) {
-			missiles.push(new Missile(target.x, target.y));
+			if (elapsedTime - lastFiredTime >= shootCoolTime) {
+				missiles.push(new Missile(target.x, target.y));
+				target.lastFiredTime = elapsedTime;
+			}
 		}
 
 		missiles.forEach(ms => {
@@ -195,6 +214,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 	}
 
 	function drawCloud(context, targets) {
+		const randomYspeed = Math.random();
 		targets.forEach(cloud => {
 			context.drawImage(
 				cloud.image,
@@ -204,7 +224,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 				cloud.draw.height
 			);
 			cloud.x += cloud.speed;
-			cloud.y += 0.5;
+			cloud.y += randomYspeed;
 			if (cloud.x >= backWidth + cloudDrawWidth) {
 				cloud.x = 0;
 			}
@@ -234,7 +254,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 					// if (foundMissileIndex >= 0) {
 					// 	missiles.splice(foundMissileIndex, 1);
 					// }
-          missiles.splice(missileIndex, 1);
+					missiles.splice(missileIndex, 1);
 				}
 			});
 		});
