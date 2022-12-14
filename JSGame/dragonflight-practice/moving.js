@@ -3,6 +3,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	const context = canvasElement.getContext("2d");
 
+	const GAME_STATE = {
+		PLAYING: "playing",
+		PAUSE: "pausing",
+		GAMEOVER: "gameover"
+	};
+	let gameState = GAME_STATE.PLAYING;
+
 	const imgSrc1 = "./01.png";
 	const cloudImgSrc = ["./cloud.png", "./cloud2.png"];
 
@@ -55,10 +62,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 	const cloudDrawHeigth = 50;
 
 	let y = 0;
-	let cloudX = 0;
-	let cloudY = 0;
 
 	let keyboard = {};
+	let gameScore = 0;
 
 	window.addEventListener("keydown", event => {
 		const { key, code } = event;
@@ -98,7 +104,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 		}
 	});
 
-	
 	const cloudDummy = {
 		width: cloudWidth,
 		height: cloudHeight,
@@ -107,23 +112,35 @@ document.addEventListener("DOMContentLoaded", async () => {
 			height: cloudDrawHeigth,
 		},
 	};
-	const clouds = [new Cloud(cloudImages, cloudDummy)];
-	const cloudsLength = Array.from({ length: 5 }, (v, i) => i);
+
+
+	let player;
+	let missiles;
+	let elapsedTime;
+	let clouds;
+	function init() {
+		player = new Player(backWidth, backHeight);
+		missiles = [];
+		elapsedTime = 0;
+		clouds = [new Cloud(cloudImages, cloudDummy)];
+	}
+	init();
+
+	// const clouds = [new Cloud(cloudImages, cloudDummy)];
+	const cloudsLength = Array.from({ length: 7 }, (v, i) => i);
 	cloudsLength.forEach(() => {
 		clouds.push(new Cloud(cloudImages, cloudDummy));
 	});
 
-	const player = new Player();
-	const missiles = [];
-	let elapsedTime = 0;
-
-	function Player() {
+	function Player(backWidth, backHeight) {
+		const playerWidthSize = 30;
+		const playerHeightSize = 30;
 		return {
 			speed: 5,
-			x: 0,
-			y: 0,
-			width: 30,
-			height: 30,
+			x: backWidth / 2 - playerWidthSize / 2,
+			y: backHeight - playerHeightSize,
+			width: playerWidthSize,
+			height: playerHeightSize,
 			lastFiredTime: 0,
 		};
 	}
@@ -160,17 +177,36 @@ document.addEventListener("DOMContentLoaded", async () => {
 		elapsedTime += 60;
 		context.clearRect(0, 0, backWidth, backHeight);
 		drawBackground();
-		drawCloud(context, clouds);
-		drawPlayer(context, player);
+		drawCloud(context, clouds, player);
+		drawPlayer(context, player, backWidth, backHeight);
+		drawText(context, gameScore);
+	}
+
+	function updateGameover() {
+		const gameOverMessage = 'GAME OVER';
+		const gameRestart = 'Press Enter';
+		context.fillText(gameOverMessage, 100, 100);
+		context.fillText(gameRestart, 100, 130);
+		if (keyboard.space) {
+			gameState = GAME_STATE.PLAYING;
+			elapsedTime = 0;
+			gameScore = 0;
+			init();
+		}
 	}
 
 	setInterval(() => {
-		update();
+		if (gameState == GAME_STATE.PLAYING) {
+			update();
+		}
+		if (gameState == GAME_STATE.GAMEOVER) {
+			updateGameover();
+		}
 	}, 1000 / 60);
 
 	let shootCoolTime = 1800;
 
-	function drawPlayer(context, target) {
+	function drawPlayer(context, target, backWidth, backHeight) {
 		const { x, y, width, height, speed, lastFiredTime } = target;
 		//원래 검은색이었
 		context.save();
@@ -191,9 +227,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 			target.y += speed;
 		}
 
+		if (target.x >= backWidth - width) {
+			target.x = backWidth - width;
+		}
+		if (target.x <= 0) {
+			target.x = 0;
+		}
 		if (keyboard.space) {
 			if (elapsedTime - lastFiredTime >= shootCoolTime) {
+				const missileTriple = Math.floor(gameScore / 3);
 				missiles.push(new Missile(target.x, target.y));
+				if (gameScore >= 3) {
+					console.log('2',missileTriple);
+					const missileMany = Array.from({ length: missileTriple }, (v, i) => i);
+					missileMany.forEach((missile, index) => {
+						missiles.push(new Missile(target.x + 10 * (index + 1), target.y));
+					});					
+					
+				}
 				target.lastFiredTime = elapsedTime;
 			}
 		}
@@ -213,9 +264,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 		}
 	}
 
-	function drawCloud(context, targets) {
+	function drawCloud(context, targets, player) {
+		if (clouds.length <= 5) {
+			clouds.push(new Cloud(cloudImages, cloudDummy));
+		}
 		const randomYspeed = Math.random();
 		targets.forEach(cloud => {
+			cloudCollidePlayer(cloud, player, gameState);
 			context.drawImage(
 				cloud.image,
 				cloud.x,
@@ -245,6 +300,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 					if (selectedCloud.hp <= 0) {
 						clouds.splice(foundCloudIndex, 1);
+						gameScore++;
 					}
 
 					// const foundMissileIndex = missiles.findIndex(ms => {
@@ -259,6 +315,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 			});
 		});
 	}
+	function cloudCollidePlayer(cloudPosition, playerPosition) {
+		const playerDeathCollision = 	cloudPosition.x <= playerPosition.x &&
+		playerPosition.x <= cloudPosition.x + cloudPosition.draw.width &&
+		cloudPosition.y <= playerPosition.y &&
+		playerPosition.y <= cloudPosition.y + cloudPosition.draw.height; 		
+		if (playerDeathCollision) {
+			console.log('주금');
+			gameState = GAME_STATE.GAMEOVER;
+		}
+	}
 
 	function isCollision(position1, position2) {
 		return (
@@ -267,6 +333,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 			position1.y <= position2.y &&
 			position2.y <= position1.y + position1.draw.height
 		);
+	}
+
+	function drawText(context, gameScore) {
+		context.font = "bold 25px serif";
+		context.fillStyle = "#ffffff";
+		const scoreBoard = `Score ${gameScore}`;
+		context.fillText(scoreBoard, 10, 30);
 	}
 
 	// const drawCloud = function (image) {
