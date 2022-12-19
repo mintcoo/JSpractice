@@ -10,11 +10,19 @@
 		<!-- <script type="text/babel" src="react.js"></script> -->
 		<script type="text/babel">
 			const root = document.querySelector("#root");
-			const Title = () => (
-				<h3 id="title" onMouseEnter={() => console.log("mouse enter")}>
-					Hello Im a titoe
-				</h3>
-			);
+			let counter = 10;
+			const render = () => {
+				ReactDOM.render(<Container />, root);
+			};
+			const countUp = () => {
+				counter = counter + 1;
+				render();
+			};
+			// const Title = () => (
+			// 	<h3 id="title" onMouseEnter={() => console.log("mouse enter")}>
+			// 		Hello Im a titoe
+			// 	</h3>
+			// );
 			// const h3 = React.createElement(
 			// 	"h3",
 			// 	{
@@ -22,13 +30,13 @@
 			// 	},
 			// 	"Hello I'm Span"
 			// );
-			const Btn = () => (
-				<button
-					onClick={() => console.log("버튼클릭")}
-					style={{ backgroundColor: "tomato", fontSize: "20px" }}>
-					Click Me!!
-				</button>
-			);
+			// const Btn = () => (
+			// 	<button
+			// 		onClick={() => console.log("버튼클릭")}
+			// 		style={{ backgroundColor: "tomato", fontSize: "20px" }}>
+			// 		Click Me!!
+			// 	</button>
+			// );
 			// const button = React.createElement(
 			// 	"button",
 			// 	{ onClick: () => console.log("눌렀따") },
@@ -37,11 +45,11 @@
 			// const container = React.createElement("div", null, [title, btn]);
 			const Container = () => (
 				<div>
-					<Title />
-					<Btn />
+					<h3>Total Click : {counter}</h3>
+					<button onClick={countUp}>Click Me!!</button>
 				</div>
 			);
-			ReactDOM.render(<Container />, root);
+			render();
 		</script>
 		<title>Document</title>
 	</head>
