@@ -11,12 +11,13 @@
 		<script type="text/babel">
 			const root = document.querySelector("#root");
 			let counter = 10;
-			const render = () => {
-				ReactDOM.render(<Container />, root);
-			};
+
 			const countUp = () => {
 				counter = counter + 1;
 				render();
+			};
+			const render = () => {
+				ReactDOM.render(<Container />, root);
 			};
 			// const Title = () => (
 			// 	<h3 id="title" onMouseEnter={() => console.log("mouse enter")}>
@@ -49,7 +50,10 @@
 					<button onClick={countUp}>Click Me!!</button>
 				</div>
 			);
+			
 			render();
+
+
 		</script>
 		<title>Document</title>
 	</head>
