@@ -1,63 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-		<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-		<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-		<!-- <script type="text/babel" src="react.js"></script> -->
-		<script type="text/babel">
-			const root = document.querySelector("#root");
-			let counter = 10;
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- <script type="text/babel" src="react.js"></script> -->
+    <script type="text/babel">
+      // ---- 여기 state ----
+      //   const App = () => {
+      //     const [counter, setCounter] = React.useState(0);
+      //     const onClick = () => {
+      //       setCounter((current) => current + 1);
+      //     };
+      //     return (
+      //       <div>
+      //         <h3>Total Click : {counter}</h3>
+      //         <button onClick={onClick}>Click Me!!</button>
+      //       </div>
+      //     );
+      //   };
+      // ---- 여기 state ----
+      const App = () => {
+        const [minutes, setMinutes] = React.useState(0);
+        const onChange = (event) => {
+          console.log(event.target.value);
+          setMinutes(event.target.value);
+        };
+        return (
+          <div>
+            <h4>test convert {minutes}</h4>
+            <h1> Super Converter </h1>
+            <label htmlFor="minute">Minute</label>
+            <input
+              //   value={minutes}
+              id="minute"
+              placeholder="Minute"
+              type="number"
+              onChange={onChange}
+            />
+            <label htmlFor="hour">Hour</label>
+            <input id="hour" placeholder="hour" type="number" />
+          </div>
+        );
+      };
+      const root = document.querySelector("#root");
+      ReactDOM.render(<App />, root);
+      // const Title = () => (
+      // 	<h3 id="title" onMouseEnter={() => console.log("mouse enter")}>
+      // 		Hello Im a titoe
+      // 	</h3>
+      // );
+      // const h3 = React.createElement(
+      // 	"h3",
+      // 	{
+      // 		onMouseEnter: () => console.log("이것도 되냐??"),
+      // 	},
+      // 	"Hello I'm Span"
+      // );
+      // const Btn = () => (
+      // 	<button
+      // 		onClick={() => console.log("버튼클릭")}
+      // 		style={{ backgroundColor: "tomato", fontSize: "20px" }}>
+      // 		Click Me!!
+      // 	</button>
+      // );
+      // const button = React.createElement(
+      // 	"button",
+      // 	{ onClick: () => console.log("눌렀따") },
+      // 	"click me"
+      // );
+      // const container = React.createElement("div", null, [title, btn]);
+      // const Container = () => (
+      // 	<div>
+      // 		<h3>Total Click : {counter}</h3>
+      // 		<button onClick={countUp}>Click Me!!</button>
+      // 	</div>
+      // );
 
-			const countUp = () => {
-				counter = counter + 1;
-				render();
-			};
-			const render = () => {
-				ReactDOM.render(<Container />, root);
-			};
-			// const Title = () => (
-			// 	<h3 id="title" onMouseEnter={() => console.log("mouse enter")}>
-			// 		Hello Im a titoe
-			// 	</h3>
-			// );
-			// const h3 = React.createElement(
-			// 	"h3",
-			// 	{
-			// 		onMouseEnter: () => console.log("이것도 되냐??"),
-			// 	},
-			// 	"Hello I'm Span"
-			// );
-			// const Btn = () => (
-			// 	<button
-			// 		onClick={() => console.log("버튼클릭")}
-			// 		style={{ backgroundColor: "tomato", fontSize: "20px" }}>
-			// 		Click Me!!
-			// 	</button>
-			// );
-			// const button = React.createElement(
-			// 	"button",
-			// 	{ onClick: () => console.log("눌렀따") },
-			// 	"click me"
-			// );
-			// const container = React.createElement("div", null, [title, btn]);
-			const Container = () => (
-				<div>
-					<h3>Total Click : {counter}</h3>
-					<button onClick={countUp}>Click Me!!</button>
-				</div>
-			);
-			
-			render();
-
-
-		</script>
-		<title>Document</title>
-	</head>
-	<body>
-		<div id="root"></div>
-	</body>
+      // render();
+    </script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>
