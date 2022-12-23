@@ -24,25 +24,41 @@
       //   };
       // ---- 여기 state ----
       const App = () => {
-        const [minutes, setMinutes] = React.useState(0);
+        let [minutes, setMinutes] = React.useState(0);
         const onChange = (event) => {
           console.log(event.target.value);
           setMinutes(event.target.value);
+        };
+        const reset = () => {
+          console.log(minutes);
+          // setMinutes((current) => (current = 0));
+          setMinutes(0);
         };
         return (
           <div>
             <h4>test convert {minutes}</h4>
             <h1> Super Converter </h1>
-            <label htmlFor="minute">Minute</label>
-            <input
-              //   value={minutes}
-              id="minute"
-              placeholder="Minute"
-              type="number"
-              onChange={onChange}
-            />
-            <label htmlFor="hour">Hour</label>
-            <input id="hour" placeholder="hour" type="number" />
+            <div>
+              <label htmlFor="minute">Minute</label>
+              <input
+                value={minutes}
+                id="minute"
+                placeholder="Minute"
+                type="number"
+                onChange={onChange}
+              />
+            </div>
+            <div>
+              <label htmlFor="hour">Hour</label>
+              <input
+                value={Math.floor(minutes / 60)}
+                id="hour"
+                placeholder="hour"
+                type="number"
+                disabled
+              />
+            </div>
+            <button onClick={reset}>reset</button>
           </div>
         );
       };
