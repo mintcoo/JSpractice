@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+		<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+		<script src="https://unpkg.com/prop-types@15.7.2/prop-types.js"></script>
+		<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+		<!-- <script type="text/babel" src="react.js"></script> -->
+		<script type="text/babel">
+      // 저렇게 prop설정 되지않은 값은(fontSize) 디폴트로 줄수도 있다 JS문법이다!
+			const Btn = ({ apple, changeValue, fontSize = 10}) => {
+				return (
+					<button
+						onClick={changeValue}
+						style={{
+							backgroundColor: "tomato",
+							color: "white",
+							padding: "10px 20px",
+							border: 0,
+							borderRadius: "10px",
+							fontSize,
+						}}>
+						{apple}
+					</button>
+				);
+			};
+			// const MemorizedBtn = React.memo(Btn);
+			Btn.propTypes = {
+				apple: PropTypes.string.isRequired,
+				fontSize: PropTypes.number,
+			};
+      let isChanged = false;
+			const App = () => {
+				const [value, setValue] = React.useState("changed!!");
+				const changeValue = () => {
+          isChanged = !isChanged;
+          setValue(isChanged ? "changed!!" : "Not Changed!!");
+          
+        }
+				return (
+					<div>
+						<Btn changeValue={changeValue} apple={value} fontSize={18} />
+						<Btn apple="Continue" peer="test" big={false} />
+					</div>
+				);
+			};
+			const root = document.querySelector("#root");
+			ReactDOM.render(<App />, root);
+		</script>
+		<title>Document</title>
+	</head>
+	<body>
+		<div id="root"></div>
+	</body>
+</html>
