@@ -1,62 +1,72 @@
 // import Button from "./Button";
 // import styles from "./App.module.css";
-import axios from "axios";
-import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Movie from "./components/Movie.js";
 
 function App() {
-	const [loading, setLoading] = useState(true);
-	const [coins, setCoins] = useState([]);
-	const [cost, setCost] = useState(0);
-	const [trade, setTrade] = useState(0);
-	const onChange = event => {
-			console.log(event.target.value)
-			setCost((current) => event.target.value)
-	};
-	const onChange2 = event => {
-		if (event.key === 'Enter') {
-			console.log(event.target.value);
-			const money = event.target.value;
-			setTrade((current) => money )
-		}
-	};
-
-	// useEffect(() => {
-	// 	fetch("https://api.coinpaprika.com/v1/tickers")
-	// 		.then(response => response.json())
-	// 		.then(json => {
-	// 			setCoins(json);
-	// 			setLoading(false);
-	// 		});
-	// }, []);
-	useEffect(() => {
-		axios({
-			url: "https://api.coinpaprika.com/v1/tickers",
-		}).then(res => {
-			console.log(res.data);
-			setCoins(res.data);
-			setLoading(false);
-		});
-	}, []);
-	return (
-		<div>
-			<h1>the Coins!!{coins.length}</h1>
-			<input type="number" defalut-value={trade} onKeyUp={onChange2}/>
-			{loading ? (
-				<strong>Loading...</strong>
-			) : (
-				<select onChange={onChange}>
-					{coins.map(coin => (
-						<option value={coin.quotes.USD.price} key={coin.id}>
-							{coin.name} : ({coin.symbol}) ${coin.quotes.USD.price}
-						</option>
-					))}
-				</select>
-			)}
-			<hr />
-			<h1>{Math.floor(trade/cost)}</h1>
-		</div>
-	);
+  return <Router>
+    <Routes>
+      
+    </Routes>
+  </Router>
 }
+
+// ------ 이 아래로는 coin 받아오기 연습 ------
+
+// function App() {
+// 	const [loading, setLoading] = useState(true);
+// 	const [coins, setCoins] = useState([]);
+// 	const [cost, setCost] = useState(0);
+// 	const [trade, setTrade] = useState(0);
+// 	const onChange = event => {
+// 			console.log(event.target.value)
+// 			setCost((current) => event.target.value)
+// 	};
+// 	const onChange2 = event => {
+// 		if (event.key === 'Enter') {
+// 			console.log(event.target.value);
+// 			const money = event.target.value;
+// 			setTrade((current) => money )
+// 		}
+// 	};
+
+// 	// useEffect(() => {
+// 	// 	fetch("https://api.coinpaprika.com/v1/tickers")
+// 	// 		.then(response => response.json())
+// 	// 		.then(json => {
+// 	// 			setCoins(json);
+// 	// 			setLoading(false);
+// 	// 		});
+// 	// }, []);
+// 	useEffect(() => {
+// 		axios({
+// 			url: "https://api.coinpaprika.com/v1/tickers",
+// 		}).then(res => {
+// 			console.log(res.data);
+// 			setCoins(res.data);
+// 			setLoading(false);
+// 		});
+// 	}, []);
+// 	return (
+// 		<div>
+// 			<h1>the Coins!!{coins.length}</h1>
+// 			<input type="number" defalut-value={trade} onKeyUp={onChange2}/>
+// 			{loading ? (
+// 				<strong>Loading...</strong>
+// 			) : (
+// 				<select onChange={onChange}>
+// 					{coins.map(coin => (
+// 						<option value={coin.quotes.USD.price} key={coin.id}>
+// 							{coin.name} : ({coin.symbol}) ${coin.quotes.USD.price}
+// 						</option>
+// 					))}
+// 				</select>
+// 			)}
+// 			<hr />
+// 			<h1>{Math.floor(trade/cost)}</h1>
+// 		</div>
+// 	);
+// }
 
 // ---------- 이 아래로는 To Do List 연습 ----------- //
 // function App() {
