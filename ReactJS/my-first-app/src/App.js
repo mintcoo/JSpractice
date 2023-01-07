@@ -1,14 +1,19 @@
 // import Button from "./Button";
 // import styles from "./App.module.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Movie from "./components/Movie.js";
+// import Movie from "./components/Movie.js";
+import Home from "./routes/Home";
+import Detail from "./routes/Detail";
 
 function App() {
-  return <Router>
-    <Routes>
-      
-    </Routes>
-  </Router>
+  return (
+    <Router>
+      <Routes>
+        <Route path="/movie/:id" element={<Detail />} />
+        <Route path="/" element={<Home />} />
+      </Routes>
+    </Router>
+  );
 }
 
 // ------ 이 아래로는 coin 받아오기 연습 ------
