@@ -12,7 +12,7 @@ const Detail = () => {
     const movieDetailData = await axios({
       url: `https://yts.mx/api/v2/movie_details.json?movie_id=${id}`,
     });
-    const movie = movieDetailData.data.data.movie;
+    const { movie } = movieDetailData.data.data;
     console.log("22", movie);
     setDetailMovie(movie);
     setLoading(false);
