@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { authService } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import Navigation from "./components/Navigation";
+import Profile from "./routes/Profile";
 import Home from "./routes/Home";
 import Auth from "./routes/Auth";
 
@@ -25,10 +27,12 @@ function App() {
 		<>
 			{ init ? 
 				<Router>
+					{isLoggedIn && <Navigation />}
 					<Routes>
 						{isLoggedIn ? (
 							<>
 								<Route path="/" element={<Home />} />
+								<Route path="/profile" element={<Profile />} />
 							</>
 						) : (
 							<Route path="/" element={<Auth />} />

@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
+  // sendEmailVerification
 } from "firebase/auth";
 
 const Auth = () => {
@@ -32,7 +33,8 @@ const Auth = () => {
           authService,
           email,
           password
-        );
+          );
+        // sendEmail();
       } else {
         // Log in
         data = await signInWithEmailAndPassword(authService, email, password);
@@ -46,18 +48,29 @@ const Auth = () => {
   const toggleAccount = () => {
     setNewAccount((prev) => !prev);
   }
+  // const sendEmail = async () => {
+  //   try {
+  //     const message = await sendEmailVerification(authService.currentUser);
+  //     console.log('22222',message);
+
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // }
 
   const onSocialClick = async (event) => {
     const { name } = event.target;
     let provider;
     if (name === "google") {
       provider = new GoogleAuthProvider();
+
     } else if (name === "github") {
       provider = new GithubAuthProvider();
     }
     const data = await signInWithPopup(authService, provider);
     console.log(data);
   }
+
 
   return (
     <div>
