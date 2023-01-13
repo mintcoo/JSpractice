@@ -1,9 +1,27 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
+import { dbService } from "../firebase";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 
 const Home = () => {
   const [nweet, setNweet] = useState("");
-  const onSubmit = (event) => {
+  const [nweets, setNweets] = useState([]);
+  useEffect(() => {
+    
+  }, [])
+
+  const onSubmit = async (event) => {
     event.preventDefault();
+    try {
+      const dataCollection = await collection(dbService, "Nweets");
+      const data = await addDoc(dataCollection, {
+        nweet,
+        createdAt: Date.now(),
+      });
+      setNweet("");
+      console.log("Document written with ID: ", data.id);
+    } catch (error) {
+      console.log(error);
+    }
   };
   const onChange = (event) => {
     const { value } = event.target;
