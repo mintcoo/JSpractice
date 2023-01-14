@@ -10,11 +10,15 @@ import Auth from "./routes/Auth";
 function App() {
 	// console.log('23123',authService.currentUser);
 	const [init, setInit] = useState(false);
-	const [isLoggedIn, setIsLoggedIn] = useState(authService.currentUser);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [userObj, setUserObj] = useState(null);
+	
 	useEffect(() => {
 		onAuthStateChanged(authService, user => {
 			if (user) {
 				setIsLoggedIn(true);
+				setUserObj(user);
+				
 				// const uid = user.uid;
 			} else {
 				setIsLoggedIn(false);
@@ -22,16 +26,15 @@ function App() {
 			setInit(true);
 		});
 	}, []);
-
 	return (
 		<>
-			{ init ? 
+			{init ? (
 				<Router>
 					{isLoggedIn && <Navigation />}
 					<Routes>
 						{isLoggedIn ? (
 							<>
-								<Route path="/" element={<Home />} />
+								<Route path="/" element={<Home userObj={userObj}/>} />
 								<Route path="/profile" element={<Profile />} />
 							</>
 						) : (
@@ -40,8 +43,9 @@ function App() {
 					</Routes>
 					<footer>&copy; {new Date().getFullYear()} Ntwitter</footer>
 				</Router>
-				: "Initializing......"
-			}
+			) : (
+				"Initializing......"
+			)}
 		</>
 	);
 }
