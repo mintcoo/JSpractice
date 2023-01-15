@@ -10,18 +10,18 @@ import Auth from "./routes/Auth";
 function App() {
 	// console.log('23123',authService.currentUser);
 	const [init, setInit] = useState(false);
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	// userObj로 로그인여부를 대신해서 줄임
+	// const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [userObj, setUserObj] = useState(null);
 	
 	useEffect(() => {
 		onAuthStateChanged(authService, user => {
 			if (user) {
-				setIsLoggedIn(true);
+				// setIsLoggedIn(true);
 				setUserObj(user);
-				
 				// const uid = user.uid;
 			} else {
-				setIsLoggedIn(false);
+				setUserObj(null);
 			}
 			setInit(true);
 		});
@@ -30,9 +30,9 @@ function App() {
 		<>
 			{init ? (
 				<Router>
-					{isLoggedIn && <Navigation />}
+					{userObj && <Navigation />}
 					<Routes>
-						{isLoggedIn ? (
+						{userObj ? (
 							<>
 								<Route path="/" element={<Home userObj={userObj}/>} />
 								<Route path="/profile" element={<Profile />} />
@@ -41,7 +41,7 @@ function App() {
 							<Route path="/" element={<Auth />} />
 						)}
 					</Routes>
-					<footer>&copy; {new Date().getFullYear()} Ntwitter</footer>
+					{/* <footer>&copy; {new Date().getFullYear()} Ntwitter</footer> */}
 				</Router>
 			) : (
 				"Initializing......"
