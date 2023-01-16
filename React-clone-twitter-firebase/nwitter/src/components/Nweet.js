@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { getStorage, ref, deleteObject } from "firebase/storage";
 import { dbService } from "../firebase";
 
 const Nweet = ({ nweetObj, isOwner }) => {
@@ -7,13 +8,15 @@ const Nweet = ({ nweetObj, isOwner }) => {
 	const [newNweet, setNewNweet] = useState(nweetObj.text);
   const { downLoadUrl } = nweetObj;
 
-
   const dataDoc = doc(dbService, "Nweets", `${nweetObj.id}`);
+	const storage = getStorage();
+	const imageFileRef = ref(storage, `${nweetObj.downLoadUrl}`);
 
 	const onDeleteNweet = async () => {
 		const ok = window.confirm("ㄹㅇ 지울거임???");
 		if (ok) {
 			await deleteDoc(dataDoc);
+			await deleteObject(imageFileRef)
 		} else {
 			console.log("안지워짐 ㅋㅋ");
 		}
