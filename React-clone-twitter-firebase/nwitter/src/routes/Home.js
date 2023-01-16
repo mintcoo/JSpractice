@@ -28,7 +28,7 @@ const Home = ({ userObj }) => {
 
 	// 여기는 reattime 방법
 	const dbNweetsRealtime = async () => {
-		const dataCollection = await query(
+		const dataCollection = query(
 			collection(dbService, "Nweets"),
 			orderBy("createdAt", "desc")
 		);

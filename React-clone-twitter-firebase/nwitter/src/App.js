@@ -13,7 +13,7 @@ function App() {
 	// userObj로 로그인여부를 대신해서 줄임
 	// const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [userObj, setUserObj] = useState(null);
-	
+
 	useEffect(() => {
 		onAuthStateChanged(authService, user => {
 			if (user) {
@@ -30,12 +30,12 @@ function App() {
 		<>
 			{init ? (
 				<Router>
-					{userObj && <Navigation />}
+					{userObj && <Navigation userObj={userObj} />}
 					<Routes>
 						{userObj ? (
 							<>
-								<Route path="/" element={<Home userObj={userObj}/>} />
-								<Route path="/profile" element={<Profile />} />
+								<Route path="/" element={<Home userObj={userObj} />} />
+								<Route path="/profile" element={<Profile userObj={userObj} />} />
 							</>
 						) : (
 							<Route path="/" element={<Auth />} />
