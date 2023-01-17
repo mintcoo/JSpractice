@@ -96,8 +96,9 @@ const NweetFactory = ({ userObj }) => {
     fileInput.current.value = null;
   };
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className="factoryForm">
       <input
+        className="factoryInput__input"
         onChange={onChange}
         value={nweet}
         type="text"
@@ -112,7 +113,7 @@ const NweetFactory = ({ userObj }) => {
       />
       <input type="submit" value="nweet" />
       {fileUpload && (
-        <div>
+        <div className="factoryForm__attachment">
           <img src={fileUpload} width="50px" height="50px" alt="fileimage" />
           <button onClick={onClearImage}>Clear</button>
         </div>
