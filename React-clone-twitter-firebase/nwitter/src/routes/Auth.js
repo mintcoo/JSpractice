@@ -1,5 +1,9 @@
 import { React, useState } from "react";
-import { authService, GoogleAuthProvider, GithubAuthProvider } from "../firebase";
+import {
+  authService,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+} from "../firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -32,8 +36,8 @@ const Auth = () => {
         data = await createUserWithEmailAndPassword(
           authService,
           email,
-          password
-          );
+          password,
+        );
         // sendEmail();
       } else {
         // Log in
@@ -41,13 +45,13 @@ const Auth = () => {
       }
       console.log("test", data);
     } catch (error) {
-      setError(error.message.replace('Firebase: ', ''));
+      setError(error.message.replace("Firebase: ", ""));
     }
   };
 
   const toggleAccount = () => {
     setNewAccount((prev) => !prev);
-  }
+  };
   // const sendEmail = async () => {
   //   try {
   //     const message = await sendEmailVerification(authService.currentUser);
@@ -63,14 +67,12 @@ const Auth = () => {
     let provider;
     if (name === "google") {
       provider = new GoogleAuthProvider();
-
     } else if (name === "github") {
       provider = new GithubAuthProvider();
     }
     const data = await signInWithPopup(authService, provider);
     console.log(data);
-  }
-
+  };
 
   return (
     <div>
@@ -92,17 +94,20 @@ const Auth = () => {
           onChange={onChange}
           autoComplete="off"
         />
-        <input
-          type="submit"
-          value={newAccount ? "Create Account" : "Log In"}
-        />
+        <input type="submit" value={newAccount ? "Create Account" : "Log In"} />
         {error}
       </form>
-      <span onClick={toggleAccount}>{newAccount ? "Log in" : "Create Account"}</span>
-        <div>
-          <button onClick={onSocialClick} name="google">Continue with Google</button>
-          <button onClick={onSocialClick} name="github">Continue with Github</button>
-        </div>
+      <span onClick={toggleAccount}>
+        {newAccount ? "Log in" : "Create Account"}
+      </span>
+      <div>
+        <button onClick={onSocialClick} name="google">
+          Continue with Google
+        </button>
+        <button onClick={onSocialClick} name="github">
+          Continue with Github
+        </button>
+      </div>
     </div>
   );
 };

@@ -13,7 +13,7 @@ import {
 import { dbService } from "../firebase";
 // import { Link } from "react-router-dom";
 
-const Profile = ({ userObj }) => {
+const Profile = ({ userObj, refreshUser }) => {
 	const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
 	const navigate = useNavigate();
 	const auth = getAuth();
@@ -43,11 +43,14 @@ const Profile = ({ userObj }) => {
 		} = event;
 		setNewDisplayName(value);
 	};
+
+	// 제출하기
 	const onSubmit = async event => {
 		event.preventDefault();
 		if (userObj.displayName !== newDisplayName) {
 			await updateProfile(userObj, { displayName: newDisplayName });
 		}
+		refreshUser();
 	};
 
 	useEffect(() => {
