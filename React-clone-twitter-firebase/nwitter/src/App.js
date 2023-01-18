@@ -38,7 +38,7 @@ function App() {
   return (
     <>
       {init ? (
-        <Router>
+        <Router basename="/">
           {userObj && <Navigation userObj={userObj} />}
           <Routes>
             {userObj ? (
