@@ -361,3 +361,100 @@ dic.add(kimchi);
 dic.def("kimchi");
 ```
 
+![image-20230122001621915](TSpractice.assets/image-20230122001621915.png)
+
+- 이렇게 타입은 특정 값을 타입으로도 쓸수가있따
+
+Type의 용도 :
+\1. 특정 값이나 객체의 값에 대한 타입을 지정해줄 수 있다.
+\2. Type alias(타입에 대한 별명)를 만들어줄 수 있다.
+\3. 타입을 특정한 값을 가지도록 제한할 수 있다.
+
+Static Members
+클래스에는 static 멤버가 있을 수 있습니다. 이 멤버는 클래스의 특정 인스턴스와 연결되지 않습니다. 클래스 생성자 객체 자체를 통해 액세스할 수 있습니다. static 멤버는 동일한 public, protected 및 private 과 함께 사용할 수도 있습니다.
+
+```typescript
+class MyClass {
+static x = 0;
+static printX() {
+console.log(MyClass.x);
+}
+}
+console.log(MyClass.x);
+MyClass.printX();
+```
+
+
+```typescript
+https://www.typescriptlang.org/docs/handbook/2/classes.html#static-members
+```
+
+Interfaces
+객체의 모양을 특정해주기 위해 사용합니다. 여기서는 firstName 및 lastName 필드가 있는 객체를 설명하는 인터페이스를 사용합니다.
+
+https://www.typescriptlang.org/docs/handbook/typescript-tooling-in-5-minutes.html#interfaces
+
+## Interface
+
+![image-20230122002816226](TSpractice.assets/image-20230122002816226.png)
+
+![image-20230122002909205](TSpractice.assets/image-20230122002909205.png)
+
+- 타입으로 상속받아서 만들면 좀 다르게 생기게됨 
+- 위에가 더편하고 좋다고함
+- 특히 리액트쓸려면
+
+![image-20230122003022696](TSpractice.assets/image-20230122003022696.png)
+
+![image-20230122003038390](TSpractice.assets/image-20230122003038390.png)
+
+![image-20230122003239819](TSpractice.assets/image-20230122003239819.png)
+
+- 타입으로는 이렇게 안된다
+
+- 즉 인터페이스는 객체지향 프로그래밍의 개념을 활용해서 디자인되었고 오브젝트에는 이게 더 낫다 
+
+***
+
+![image-20230122004201647](TSpractice.assets/image-20230122004201647.png)
+
+- 추상클래스 복습
+
+![image-20230122004256109](TSpractice.assets/image-20230122004256109.png)
+
+![image-20230122004400030](TSpractice.assets/image-20230122004400030.png)
+
+![image-20230122004858127](TSpractice.assets/image-20230122004858127.png)
+
+### implements
+
+implements을 사용하여 클래스가 특정 인터페이스를 충족하는지 확인할 수 있습니다.
+클래스를 올바르게 구현하지 못하면 오류가 발생합니다.
+implements 절은 클래스가 인터페이스 유형으로 처리될 수 있는지 확인하는 것입니다. 클래스의 유형이나 메서드는 전혀 변경하지 않습니다.
+또한 클래스는 여러 인터페이스를 구현할 수도 있습니다. 클래스 C는 A, B를 구현합니다.
+ex) class C implements A, B { }
+
+```typescript
+interface Pingable {
+ping(): void;
+}
+
+// Sonar클래스는 Pingable인터페이스를 implement했기 때문에 Pingable가 가진 ping메서드를 구현해줘야 합니다.
+class Sonar implements Pingable {
+ping() {
+console.log("ping!");
+}
+}
+```
+
+- 오늘 복습했던 위에 완성한 추상클래스를 인터페스를 통해서 구현
+  - 기존의 필요없이 JS화 되어서 구현되던 추상클래스인 User가 이제 JS에서 사라지고 가벼워짐
+  - extends 대신 implements 사용
+  - extends는 JS에서 쓰니까 그대로 컴파일 되었는데 implements 는 TS꺼라 컴파일 안됨
+
+- 즉, 인터페이스는 TS에만 존재하고 실제 코드엔 보여지지않으니 대부분에는 더 좋다
+
+![image-20230122005735691](TSpractice.assets/image-20230122005735691.png)
+
+- 인터페이스도 타입처럼 쓸수가 있으니 잊지말자
+
