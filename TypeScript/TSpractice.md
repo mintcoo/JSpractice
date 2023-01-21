@@ -208,3 +208,156 @@ else console.log(config.path);
 }
 
 패키지나 라이브러리는 위와 같이 두 가지 경우의 Overloading으로 디자인되어 있을 것이다
+
+***
+
+polymorphism
+인자들과 반환값에 대하여 형태(타입)에 따라 그에 상응하는 형태(타입)를 갖을 수 있다.
+
+any와의 차이점은 해당 타입에 대한 정보를 잃지 않는다.
+any는 any로서 밖에 알 수 없지만 generics는 타입 정보를 알 수 있다.
+
+─ 예시 ────────────────────────
+type SuperPrint = { (arr: T[]): void }
+type SuperReturn = { (arr: T[]): T }
+
+const superPrint: SuperPrint = (arr) => {
+  arr.forEach(i => console.log(i))
+}
+const superReturn: SuperReturn = (arr) => arr[0]
+
+superPrint([1, 2, false, true])
+console.log(superReturn([1, 2, 3, 4]))
+
+![image-20230120231658898](TSpractice.assets/image-20230120231658898.png)
+
+![image-20230120232303884](TSpractice.assets/image-20230120232303884.png)
+
+**강의 보면서 느낌은 알았지만 제네릭 개념을 한마디로 설명하는 게 힘들었는데 인터넷에서 본 설명이 인상 깊어서 옮겨봅니다.**
+
+**'제네릭은 선언 시점이 아니라 생성 시점에 타입을 명시하여 하나의 타입만이 아닌 다양한 타입을 사용할 수 있도록 하는 기법이다.'**
+
+https://velog.io/@edie_ko/TypeScript-Generic-%EC%A0%9C%EB%84%A4%EB%A6%AD-feat.-TypeScript-%EB%91%90-%EB%8B%AC%EC%B0%A8-%ED%9B%84%EA%B8%B0
+
+- https://developer-talk.tistory.com/195
+
+***
+
+### Classes
+
+Classes
+
+추상(abstract) 클래스
+추상 클래스는 오직 다른 클래스가 상속받을 수 있는 클래스이다.
+하지만 직접 새로운 인스턴스를 만들 수는 없다.
+```typescript
+abstract class User{
+    constructor(
+        private firstname:string,
+        private lastname:string,
+        public nickname:string
+    ){
+    abstract getNickname():void
+	}
+}
+
+class Player extends User{
+// 추상 메서드는 추상 클래스를 상속받는 클래스들이 반드시 구현(implement)해야하는 메서드이다.
+	getNickname(){
+	console.log(this.nickname)
+	}
+}
+
+```
+
+
+public: 모든 클래스에서 접근 가능
+private: 해당 클래스 내에서만 접근 가능 (자식 클래스에서도 접근 불가)
+protected: 해당 클래스와 자식 클래스에서 접근 가능
+
+https://www.typescriptlang.org/docs/handbook/2/classes.html
+
+📌접근 가능한 위치
+
+구분　　　선언한 클래스 내　상속받은 클래스 내　인스턴스
+private 　 　　　⭕　　　　　　　❌　　　　　❌
+protected 　　　⭕　　　　　　　⭕　　　　　❌
+public　　　　　⭕　　　　　　　⭕　　　　　⭕
+
+***
+
+## Class 추가공부
+
+```typescript
+type Words = {
+    [key: string]: string
+}
+
+// 위의 key값에 대한 예시 key도 string으로 써야함
+// let dict : Words = {
+//     "potato" : "foods",
+//     "rice": "foods",
+// }
+
+
+class Dicts {
+    // constructor를 안에서안하고 밖에서 뺀다음 수동으로 따로 초기화해줌
+    private words: Words
+    constructor() {
+        this.words = {}
+    }
+    // 놀랍게도 아래처럼 클래스자체를 타입처럼 쓸수도 있다!
+    add(word: Word) {
+        if (this.words[word.term] === undefined) {
+            this.words[word.term] = word.def;
+        } else {
+            console.log("error")
+        }
+    }
+    // term으로 def 찾기
+    def(term: string) {
+        return this.words[term];
+    }
+    // 삭제 만들어보자
+    remove(word: Word) {
+        const { term, def } = word
+        if (this.words[term]) {
+            delete this.words[term];
+        } else {
+            console.log("그런단어 없음");
+        }
+    }
+    // 수정 만들어보자
+    update(word: Word) {
+        const { term, def } = word
+        if (this.words[term]) {
+            this.words[term] = def
+        } else {
+            console.log("그런단어 없음");
+        }
+    }
+}
+
+// 단어 정의
+class Word {
+    constructor(
+        public term: string,
+        public def: string,
+    ) { }
+    // 단어 뜻 수정 해보자
+    modiDef(newdef: string) {
+        this.def = newdef;
+    }
+    // 단어 뜻 추가 만들어보자
+    addDef(newdef: string) {
+        this.def = `${this.def}, ${newdef}`
+    }
+
+}
+
+const kimchi = new Word("kimchi", "한국의 음식")
+const dic = new Dicts();
+dic.add(kimchi);
+dic.def("kimchi");
+```
+
