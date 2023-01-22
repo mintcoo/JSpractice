@@ -426,6 +426,8 @@ https://www.typescriptlang.org/docs/handbook/typescript-tooling-in-5-minutes.htm
 
 ![image-20230122004858127](TSpractice.assets/image-20230122004858127.png)
 
+### i![image-20230122204812717](TSpractice.assets/image-20230122204812717.png)
+
 ### implements
 
 implements을 사용하여 클래스가 특정 인터페이스를 충족하는지 확인할 수 있습니다.
@@ -457,4 +459,105 @@ console.log("ping!");
 ![image-20230122005735691](TSpractice.assets/image-20230122005735691.png)
 
 - 인터페이스도 타입처럼 쓸수가 있으니 잊지말자
+
+***
+
+```typescript
+interface SStorage<T> {
+    [key: string]: T
+}
+
+class LocalStorage<T> {
+    private storage : SStorage<T> = {}
+    
+    set(key:string, value: T) {
+        return this.storage[key] = value;
+    }
+    get(key:string): T {
+        return this.storage[key];
+    }
+
+    delete(key:string) {
+        delete this.storage[key];
+    }
+    clear(key:string) {
+        this.storage = {};
+    }
+
+}
+const newTest = new LocalStorage<string>();
+
+newTest.set("test", "answer")
+newTest.get("test")
+```
+
+```typescript
+
+interface SStorage {
+	[key:string]:T
+}
+
+class LocalStorage {
+	private storage: SStorage = {}
+//Create
+	set(key:string, value:T){
+		if(this.storage[key] !== undefined){
+		return console.log(`${key}가 이미 존재합니다. update 호출 바랍니다.`)
+		}
+		this.storage[key] = value
+		}
+//Read
+        get(key:string):T|void {
+        if(this.storage[key] === undefined){
+        return console.log(`${key}가 존재하지 않습니다.`)
+        }
+        return this.storage[key]
+        }
+//Update
+        update(key:string, value:T){
+        if(this.storage[key] !== undefined){
+        this.storage[key] = value
+        } else {
+        console.log(`${key}가 존재하지 않아 새로 만듭니다.`)
+        this.storage[key] = value
+        }
+        }
+//Delete
+        remove(key:string){
+        if(this.storage[key] === undefined){
+        return console.log(`${key}가 존재하지 않습니다.`)
+        }
+        delete this.storage[key]
+        }
+//Clear
+        clear(){
+        this.storage = {}
+        }
+        }
+```
+
+***
+
+## Typescript 프로젝트 만들어보기
+
+```typ
+typescript설치
+npm i -D typescript
+
+package.json 초기화
+npm init -y
+
+tsconfig.json설정
+디렉터리에 tsconfig.json 파일이 있으면 해당 디렉터리가 TypeScript 프로젝트의 루트임을 나타냅니다. tsconfig.json 파일은 프로젝트를 컴파일하는 데 필요한 루트 파일과 컴파일러 옵션을 지정합니다.
+https://www.typescriptlang.org/docs/handbook/tsconfig-json.html#handbook-content
+
+Target (기본값: ES3)
+최신 브라우저는 모든 ES6 기능을 지원하므로 ES6는 좋은 선택입니다. 코드가 이전 환경에 배포된 경우 더 낮은 target을 설정하거나 최신 환경에서 코드 실행이 보장되는 경우 더 높은 target을 설정하도록 선택할 수 있습니다.
+ex) 화살표 함수() => this는 ES5 이하이면 함수 표현식으로 바뀝니다.
+
+특별한 ESNext 값은 TypeScript 버전이 지원하는 가장 높은 버전을 나타냅니다. 이 설정은 다른 TypeScript 버전 간에 동일한 의미가 아니며 업그레이드를 예측하기 어렵게 만들 수 있으므로 주의해서 사용해야 합니다.
+https://www.typescriptlang.org/tsconfig#target
+
+"build": "tsc" 또는 "npx tsc"
+```
 
