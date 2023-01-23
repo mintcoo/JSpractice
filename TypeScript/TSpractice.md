@@ -540,7 +540,7 @@ class LocalStorage {
 
 ## Typescript 프로젝트 만들어보기
 
-```typ
+```typescript
 typescript설치
 npm i -D typescript
 
@@ -561,3 +561,174 @@ https://www.typescriptlang.org/tsconfig#target
 "build": "tsc" 또는 "npx tsc"
 ```
 
+```typescript
+lib
+
+타입스크립트에게 어떤 API를 사용하고 어떤 환경에서 코드를 실행하는 지를 지정할 수 있습니다.
+(target 런타임 환경이 무엇인지를 지정합니다.)
+프로그램이 브라우저에서 실행되면 lib에 "DOM" 유형 정의를 할 수 있습니다.
+DOM: window, document 등
+ex) "lib": ["ES6","DOM"]
+
+https://www.typescriptlang.org/tsconfig#lib
+```
+
+```typescript
+strict
+
+모든 엄격한 타입 검사 옵션을 활성화합니다.
+strict 플래그는 프로그램 정확성을 더 강력하게 보장하는 광범위한 타입 검사 동작을 가능하게 합니다.
+```
+
+***
+
+## JSDoc
+
+```typescript
+@ts-check
+JavaScript 파일에서 오류를 활성화하려면 // @ts-check를 .js 파일의 첫 번째 줄에 추가하여 TypeScript가 오류를 발생시키도록 합니다. TypeScript는 여러 오류를 제공할 수 있습니다.
+이러한 오류를 무시하고 싶다면 // @ts-ignore 또는 // @ts-expect-error를 추가하여 특정 줄의 오류를 무시할 수 있습니다.
+https://www.typescriptlang.org/docs/handbook/intro-to-js-ts.html#ts-check
+
+JSDoc Reference
+JSDoc 주석을 사용하여 JavaScript 파일에 type 정보를 제공할 수 있습니다. (자바스크립트 파일에서 타입 정보를 제공할 수 있습니다.)
+https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html
+
+@param, @returns
+
+
+// @ts-check
+/**
+ * Initializes the project
+ * @param {object} config 
+ * @param {boolean} config.debug 
+ * @param {string} config.url 
+ * @returns boolean
+ */
+export function init(config) {
+  return true;
+}
+
+/**
+ * Exit the project
+ * @param {number} code 
+ * @returns number
+ */
+export function exit(code) {
+  return code + 1;
+}
+```
+
+***
+
+```typescript
+ts-node
+ts-node는 Node.js용 TypeScript 실행 엔진 및 REPL입니다. JIT는 TypeScript를 JavaScript로 변환하므로 사전 컴파일 없이 Node.js에서 TypeScript를 직접 실행할 수 있습니다.
+npm i ts-node -D
+https://www.npmjs.com/package/ts-node
+
+nodemon
+npm i nodemon -D
+https://www.npmjs.com/package/nodemon
+
+esModuleInterop
+CommonJS 모듈을 ES6 모듈 코드베이스로 가져오려고 할 때 발생하는 문제를 해결합니다. ES6 모듈 사양을 준수하여 CommonJS 모듈을 정상적으로 가져올 수 있게 해줍니다.
+https://www.typescriptlang.org/tsconfig/#esModuleInterop
+
+블록체인 시리즈
+https://www.youtube.com/playlist?list=PL7jH19IHhOLOJfXeVqjtiawzNQLxOgTdq
+
+```
+
+![image-20230123165843474](TSpractice.assets/image-20230123165843474.png)
+
+***
+
+```typescript
+// 타입 정의가 되어있지 않은 패키지를 사용할때
+DefinitelyTyped
+TypeScript type 정의를 위한 리포지토리입니다.
+https://github.com/DefinitelyTyped/DefinitelyTyped
+
+@types/node
+npm i @types/node -D
+```
+
+![image-20230123165534522](TSpractice.assets/image-20230123165534522.png)
+
+- 이거보고 타입스크립트 초기화하는거와 JS변환된거보고 어떤구조인지 알자
+
+***
+
+```typescript
+import crypto from "crypto";
+
+interface BlockShape {
+  hash: string;
+  prevHash: string;
+  height: number;
+  data: string;
+}
+
+class Block implements BlockShape {
+  public hash: string;
+  constructor(
+    public prevHash: string,
+    public height: number,
+    public data: string
+  ) {
+    this.hash = Block.calculateHash(prevHash, height, data);
+  }
+  static calculateHash(prevHash: string, height: number, data: string) {
+    const toHash = `${prevHash}${height}${data}`;
+    return crypto.createHash("sha256").update(toHash).digest("hex");
+  }
+}
+
+class BlockChain {
+  private blocks: Block[];
+  constructor() {
+    this.blocks = [];
+  }
+  private getPrevHash() {
+    if (this.blocks.length === 0) return "";
+    return this.blocks[this.blocks.length - 1].hash;
+  }
+  public addBlock(data: string) {
+    const newBlock = new Block(this.getPrevHash(), this.blocks.length + 1, data);
+    this.blocks.push(newBlock);
+  }
+  public getBlocks() {
+    return [...this.blocks];
+  }
+}
+
+const blockChains = new BlockChain();
+blockChains.addBlock("first");
+blockChains.addBlock("second");
+blockChains.addBlock("third");
+console.log(blockChains);
+
+// const test = new Block("test", 10, "data");
+// console.log(test.hash);
+
+```
+
+- 블록체인 완성본
+
+- 수정불가능하게 하기위해서 readonly 써줘도됨
+
+  ```typescript
+  class Block implements BlockShape{
+  public readonly hash: string;
+  constructor(
+  public readonly prevHash:string,
+  public readonly height:number,
+  public readonly data:string,
+  )
+  
+  class Blockchain {
+  .....
+  public getBlock() : readonly Block[] {
+  return this.blocks;
+  }
