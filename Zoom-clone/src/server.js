@@ -22,10 +22,20 @@ const wsServer = new Server(httpServer);
 
 wsServer.on("connection", (socket) => {
   socket.on("enter_room", (roomName, done) => {
-    console.log(roomName);
-    setTimeout(() => {
-      done("hello from the backend");
-    }, 5000);
+    socket.join(roomName);
+    // console.log(socket.rooms);
+    done();
+    socket.to(roomName).emit("welcome");
+  });
+  // 접속이 완전히 끊어지기 직전! 도중에! 먼가를 실행하고 떠날수있는거
+  socket.on("disconnecting", () => {
+    // 내가 접속해있는 모든방들에게 메시지 전달
+    socket.rooms.forEach((room) => socket.to(room).emit("bye"));
+  });
+  // 새로운 메시지 세팅 (인자로 메시지, 룸이름, 함수받아옴)
+  socket.on("new_message", (msg, room, done) => {
+    socket.to(room).emit("new_message", msg);
+    done();
   });
 });
 // 현재 연결되어있는 브라우저들을 담아주는 리스트 with websocket
