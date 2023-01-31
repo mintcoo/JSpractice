@@ -5,6 +5,7 @@ import express from "express";
 
 const app = express();
 
+
 app.set("view engine", "pug");
 app.set("views", __dirname + "/views");
 app.use("/public", express.static(__dirname + "/public"));
@@ -20,12 +21,33 @@ const httpServer = http.createServer(app);
 // 아래껀 websocket 이용
 const wsServer = new Server(httpServer);
 
+// 현재 개인방말고 공방목록
+function publicRooms() {
+  const {
+    sockets: {
+      adapter: { sids, rooms },
+    },
+  } = wsServer;
+  const publicRooms = [];
+  rooms.forEach((_, key) => {
+    if (sids.get(key) === undefined) {
+      publicRooms.push(key);
+    }
+  });
+  return publicRooms;
+}
+
+
 wsServer.on("connection", (socket) => {
+  // 이렇게 소켓에 추가가능 
+  socket["nickname"] = "Anon";
   socket.on("enter_room", (roomName, done) => {
     socket.join(roomName);
     // console.log(socket.rooms);
     done();
-    socket.to(roomName).emit("welcome");
+    socket.to(roomName).emit("welcome", socket.nickname);
+    //이건 현재 존재하는 모든방에 공방목록 생기면 알려주는것
+    // wsServer.sockets.emit("room_change", publicRooms());
   });
   // 접속이 완전히 끊어지기 직전! 도중에! 먼가를 실행하고 떠날수있는거
   socket.on("disconnecting", () => {

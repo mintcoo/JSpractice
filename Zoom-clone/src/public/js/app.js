@@ -10,10 +10,10 @@ room.hidden = true;
 let roomName;
 
 // 메시지를 채팅창에 띄워주는 함수
-function addMessage(message) {
+function addMessage(message, nickName) {
 	const ul = room.querySelector("ul");
 	const li = document.createElement("li");
-	li.innerText = message;
+	li.innerText = `${nickName} : ${message}`;
 	ul.appendChild(li);
 }
 
@@ -56,12 +56,13 @@ function handleRoomSubmit(event) {
 	input.value = "";
 }
 
+
 form.addEventListener("submit", handleRoomSubmit);
 
 
 
 socket.on("welcome", () => {
-	addMessage("누군가 들어옴!!");
+	addMessage(` 들어옴!!`);
 });
 
 socket.on("bye", () => {
