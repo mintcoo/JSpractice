@@ -12,18 +12,27 @@ html(lang="en")
             button dd
         main
             div#welcome
-                form
+                form    
                     input(placeholder="room name", required, type="text")
-                    button Enter Room
-            //- div#nickname
+                    button Enter room
+            div#call
+                div#myStream
+                    video#myFace(autoplay,playsinline, width="400", height="400")
+                    button#mute Mute
+                    button#camera Turn Camera Off
+                    select#cameras
+                    video#peerFace(autoplay,playsinline, width="400", height="400")
+                    //- video#peerFace(autoplay,playsinline, width="400", height="400")
+            //-------------- 아래로는 채팅앱 위한것 -------------
+            //- div#welcome
             //-     form
-            //-         input(placeholder="nickname", required, type="text")
-            //-         button Save                  
-            div#room
-                h3
-                ul
-                form
-                    input(placeholder="message", required, type="text")
-                    button Send
+            //-         input(placeholder="room name", required, type="text")
+            //-         button Enter Room             
+            //- div#room
+            //-     h3
+            //-     ul
+            //-     form
+            //-         input(placeholder="message", required, type="text")
+            //-         button Send
         script(src="/socket.io/socket.io.js")
         script(src="/public/js/app.js") 
