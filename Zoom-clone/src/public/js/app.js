@@ -12,23 +12,24 @@ let myStream;
 let muted = false;
 let cameraOff = false;
 let roomName;
-let myPeerConnection;
+let userCount = 1;
+let myPeerConnections = {};
 
 // 카메라들 얻는 함수
 async function getCameras() {
   try {
     const devices = await navigator.mediaDevices.enumerateDevices();
-		// 나의 모든 디바이스중 카메라만 가져오고
+    // 나의 모든 디바이스중 카메라만 가져오고
     const cameras = devices.filter((device) => device.kind === "videoinput");
-		// 현재 나의 카메라를 선택하고
-		const currentCamera = myStream.getVideoTracks()[0];
-		// 카메라 선택할 수 있는 옵션들을 만들어서 넣어줌(value에는 deviceId, text에는 label)
+    // 현재 나의 카메라를 선택하고
+    const currentCamera = myStream.getVideoTracks()[0];
+    // 카메라 선택할 수 있는 옵션들을 만들어서 넣어줌(value에는 deviceId, text에는 label)
     cameras.forEach((camera) => {
       const option = document.createElement("option");
       option.value = camera.deviceId;
       option.innerText = camera.label;
-			// 근데 현재카메라랑 카메라옵션이랑 같을때 그 옵션을 선택으로 해줌 그래야 제대로된스위치 가능
-			if (currentCamera.label === camera.label) {
+      // 근데 현재카메라랑 카메라옵션이랑 같을때 그 옵션을 선택으로 해줌 그래야 제대로된스위치 가능
+      if (currentCamera.label === camera.label) {
         option.selected = true;
       }
       camerasSelect.appendChild(option);
@@ -38,16 +39,15 @@ async function getCameras() {
   }
 }
 
-
 // async 처리해야함, 처음에는 deviceId가 없이했지만 옵션선택을 위해 이제는 받아야함
 // 그래서 분기처리해줌 deviceId가 있을때(처음)와 없을때
 async function getMedia(deviceId) {
-	// 여기는 초기 카메라없을때 모바일 셀카카메라 or 어떤카메라든 가져오는것
+  // 여기는 초기 카메라없을때 모바일 셀카카메라 or 어떤카메라든 가져오는것
   const initialConstrains = {
     audio: true,
     video: { facingMode: "user" },
   };
-	// 여기는 이후에 옵션선택해주었을때 특정 카메라
+  // 여기는 이후에 옵션선택해주었을때 특정 카메라
   const cameraConstraints = {
     audio: true,
     video: { deviceId: { exact: deviceId } },
@@ -55,11 +55,11 @@ async function getMedia(deviceId) {
 
   try {
     myStream = await navigator.mediaDevices.getUserMedia(
-      deviceId ? cameraConstraints : initialConstrains
+      deviceId ? cameraConstraints : initialConstrains,
     );
-		// console.log(myStream);
+    // console.log('22',myStream);
     myFace.srcObject = myStream;
-		// 디바이스아이디가 없을때만 딱 한번 카메라옵션 구성하는 함수 실행
+    // 디바이스아이디가 없을때만 딱 한번 카메라옵션 구성하는 함수 실행
     if (!deviceId) {
       await getCameras();
     }
@@ -72,8 +72,10 @@ async function getMedia(deviceId) {
 
 // 소리 끄는 함수
 function handleMuteClick() {
-	// console.log(myStream.getAudioTracks());
-	myStream.getAudioTracks().forEach(track => track.enabled = !track.enabled);
+  // console.log(myStream.getAudioTracks());
+  myStream
+    .getAudioTracks()
+    .forEach((track) => (track.enabled = !track.enabled));
   if (!muted) {
     muteBtn.innerText = "Unmute";
     muted = true;
@@ -84,7 +86,9 @@ function handleMuteClick() {
 }
 // 카메라 끄는 함수
 function handleCameraClick() {
-	myStream.getVideoTracks().forEach(track => track.enabled = !track.enabled);
+  myStream
+    .getVideoTracks()
+    .forEach((track) => (track.enabled = !track.enabled));
   if (cameraOff) {
     cameraBtn.innerText = "Turn Camera Off";
     cameraOff = false;
@@ -97,16 +101,19 @@ function handleCameraClick() {
 // 카메라 바꿀때 옵션 변경했으니 getMedia 다시실행해준다(이제는 특정카메라id도 담아서 실행)
 async function handleCameraChange() {
   await getMedia(camerasSelect.value);
-	// 카메라 옵션 변경시 업데이트 코드
-	if (myPeerConnection) {
-		// 밑의 videoTrack코드는 왜냐면 위에 await getMedia로 내 비디오트랙을 업데이트 해줬기떄문에 
-		// 가져오면 새로 바뀐 비디오트랙임
-    const videoTrack = myStream.getVideoTracks()[0];
-    const videoSender = myPeerConnection
-      .getSenders()
-      .find((sender) => sender.track.kind === "video");
-    videoSender.replaceTrack(videoTrack);
-  }
+  // 카메라 옵션 변경시 업데이트 코드
+  myPeerConnections.forEach((myPeerConnection) => {
+    if (myPeerConnection) {
+      // 밑의 videoTrack코드는 왜냐면 위에 await getMedia로 내 비디오트랙을 업데이트 해줬기떄문에
+      // 가져오면 새로 바뀐 비디오트랙임
+      const videoTrack = myStream.getVideoTracks()[0];
+      const videoSender = myPeerConnection
+        .getSenders()
+        .find((sender) => sender.track.kind === "video");
+      videoSender.replaceTrack(videoTrack);
+    }
+
+  })
 }
 
 muteBtn.addEventListener("click", handleMuteClick);
@@ -117,7 +124,7 @@ camerasSelect.addEventListener("input", handleCameraChange);
 const welcome = document.getElementById("welcome");
 const welcomeForm = welcome.querySelector("form");
 
-// 그냥 프로미스 연습 
+// 그냥 프로미스 연습
 // const test = () => {
 // 	const promiseTest = new Promise((resolve, reject) => {
 // 		setTimeout(() => {
@@ -133,76 +140,77 @@ const welcomeForm = welcome.querySelector("form");
 async function initCall() {
   welcome.hidden = true;
   call.hidden = false;
-	// const ttest = await test();
-	// console.log(ttest);
+  // const ttest = await test();
+  // console.log(ttest);
   await getMedia();
-	makeConnection();
+  // makeConnection();
 }
 
 // 방에 입장하는 함수 백엔드로 방의 이름을 보내줌
 async function handleWelcomeSubmit(event) {
   event.preventDefault();
   const input = welcomeForm.querySelector("input");
-	// initCall을 여기서 해주는이유는 안그러면 makeConnection이 일어나기전에 모든코드가 실행되어서 에러남
-	await initCall();
-  socket.emit("join_room", input.value);
-	// 우선 룸네임을 따로 변수로 저장해둔다 나중에 쓸려고
+  // initCall을 여기서 해주는이유는 안그러면 makeConnection이 일어나기전에 모든코드가 실행되어서 에러남
+  await initCall();
+  socket.emit("join_room", { roomName: input.value, username: "testname" });
+  // 우선 룸네임을 따로 변수로 저장해둔다 나중에 쓸려고
   roomName = input.value;
   input.value = "";
 }
 
 welcomeForm.addEventListener("submit", handleWelcomeSubmit);
 
-
-
 // --- webRTC Socket 코드부분 ---
 
 // 누군가가 방에 들어올때 처리하는 이벤트함수 => 그래서 peer A만 실행하는 코드가 된다(메시지받는쪽)
-socket.on("welcome", async () => {
-	console.log("someone enter the room!")
-	// offer란걸 만듬 (모식도를 잘 따라가자)
-  const offer = await myPeerConnection.createOffer();
+socket.on("welcome", async (socketId) => {
+  console.log("someone enter the room!");
+  let myPeer = makeConnection();
+  myPeerConnections[socketId] = myPeer;
 
-	// 만든 offer로 setLocalDescription 만듬
-  myPeerConnection.setLocalDescription(offer);
+  // offer란걸 만듬 (모식도를 잘 따라가자)
+  const offer = await myPeerConnections[socketId].createOffer();
 
-	// 그리고 만든 offer를 방의 다른사람에게 보내야함(우선 서버로 보냄)
-	console.log("sent the offer");
-  socket.emit("offer", offer, roomName);
+  // 만든 offer로 setLocalDescription 만듬
+  myPeerConnections[socketId].setLocalDescription(offer);
+
+  // 그리고 만든 offer를 방의 다른사람에게 보내야함(우선 서버로 보냄)
+  console.log("sent the offer");
+  socket.emit("offer", offer, socketId, roomName);
 });
 
 // 이건 peer B가 실행하게 되는 offer이벤트 함수 (A가 보낸 offer를 받아 setRemoteDescription함)
-socket.on("offer", async (offer) => {
-	console.log("received the offer");
-  myPeerConnection.setRemoteDescription(offer);
-	// 그리고 createAnswer 함수 실행
-  const answer = await myPeerConnection.createAnswer();
-	// 그리고 이 answer로 peer B의 setLocalDescription 해줘야함 
-	// 헷갈리지 말자!! 위의 welcome 과는 실행주체가 다르다
-  myPeerConnection.setLocalDescription(answer);
-  socket.emit("answer", answer, roomName);
-	console.log("sent the answer");
+socket.on("offer", async (offer, socketId) => {
+  console.log("received the offer");
+  myPeerConnections[socketId].setRemoteDescription(offer);
+  // 그리고 createAnswer 함수 실행
+  const answer = await myPeerConnections[socketId].createAnswer();
+  // 그리고 이 answer로 peer B의 setLocalDescription 해줘야함
+  // 헷갈리지 말자!! 위의 welcome 과는 실행주체가 다르다
+  myPeerConnections[socketId].setLocalDescription(answer);
+  socket.emit("answer", answer, socketId, roomName);
+  console.log("sent the answer");
 });
 
-// 이건 또 peer B가 다시보낸 answer를 peer A가 실행하는 함수임 
+// 이건 또 peer B가 다시보낸 answer를 peer A가 실행하는 함수임
 // 그리고 이제 둘다 setLocalDes~와 setRemoteDes~를 가지게 됨!
-socket.on("answer", (answer) => {
-	console.log("received the answer");
-  myPeerConnection.setRemoteDescription(answer);
+socket.on("answer", (answer, socketId) => {
+  console.log("received the answer");
+  myPeerConnections[socketId].setRemoteDescription(answer);
 });
 
 // icecandidate를 서로 주고받는 과정
-socket.on("ice", (ice) => {
+socket.on("ice", (ice, socketId) => {
   console.log("received candidate");
-  myPeerConnection.addIceCandidate(ice);
+  myPeerConnections[socketId].addIceCandidate(ice);
 });
 
 // --- RTC Code 부분 ---
 
 // 연결을 만드는 부분 처음, 방에 입장하자마자 실행됨, peer A 든 B든 둘다 실행됨(initCall()안에 있는 함수라)
 function makeConnection() {
-	myPeerConnection = new RTCPeerConnection({
-		// 구글의 무료 stun서버 : 내가 프로젝트할때는 내꺼 만드는게 좋다
+  let myPeerConnection = new RTCPeerConnection({
+    // 구글의 무료 stun서버 : 내가 프로젝트할때는 내꺼 만드는게 좋다
     iceServers: [
       {
         urls: [
@@ -215,26 +223,29 @@ function makeConnection() {
       },
     ],
   });
-	// icecandidate 이벤트를 듣는다.
-	myPeerConnection.addEventListener("icecandidate", handleIce);
-	// 마지막 addstream 이벤트를 듣는다
-	myPeerConnection.addEventListener("addstream", handleAddStream);
-	// 오디오트랙과 비디오트랙 2개가 나타나고 그걸 각각 myPeerConnection에 연결해줌
-	// console.log(myStream.getTracks());
-	myStream.getTracks().forEach((track) => myPeerConnection.addTrack(track, myStream));
+  // icecandidate 이벤트를 듣는다.
+  myPeerConnection.addEventListener("icecandidate", handleIce);
+  // 마지막 addstream 이벤트를 듣는다
+  myPeerConnection.addEventListener("addstream", handleAddStream);
+  // 오디오트랙과 비디오트랙 2개가 나타나고 그걸 각각 myPeerConnection에 연결해줌
+  myStream
+    .getTracks()
+    .forEach((track) => myPeerConnection.addTrack(track, myStream));
+  return myPeerConnection;
 }
 
 // icecandidate 이벤트시 실행 함수
 function handleIce(data) {
   console.log("sent candidate");
-	// icecandidate를 만들면 이걸 또 서버로 보내줌
+  // icecandidate를 만들면 이걸 또 서버로 보내줌
   socket.emit("ice", data.candidate, roomName);
 }
 
 // addStream 이벤트시 실행 함수
 function handleAddStream(data) {
-	console.log('data.stream@@@@@@@@@@@', data.stream);
-  const peerFace = document.getElementById("peerFace");
+  console.log("data.stream@@@@@@@@@@@", data.stream);
+  const peerFace = document.getElementById(`peerFace${userCount}`);
+  userCount += 1;
   peerFace.srcObject = data.stream;
 }
 
@@ -295,10 +306,7 @@ function handleAddStream(data) {
 // 	input.value = "";
 // }
 
-
 // form.addEventListener("submit", handleRoomSubmit);
-
-
 
 // socket.on("welcome", () => {
 // 	addMessage(` 들어옴!!`);
@@ -309,7 +317,6 @@ function handleAddStream(data) {
 // });
 
 // socket.on("new_message", (msg) => {addMessage(msg)});
-
 
 // ----------- 그냥 webSocket으로만 쓰는 코드 -----------
 // const messageList = document.querySelector("ul");

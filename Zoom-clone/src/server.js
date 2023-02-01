@@ -21,26 +21,49 @@ const httpServer = http.createServer(app);
 // const wss = new WebSocket.Server({ server });
 const wsServer = new Server(httpServer);
 
+// 유저들이 들어가있는 방들의 목록
+let users = {};
+let socketToRoom = {};
+
+const maximum = 4;
+
 // 연결되었을때
 wsServer.on("connection", socket => {
 	// 프론트에서 보낸 join_room 이벤트를 실행(roomName방에 입장하고 받아온 함수(done)을 실행)
-	socket.on("join_room", roomName => {
+	socket.on("join_room", ({roomName, username} )=> {
+		// 방이 이미 존재하고
+		if (users[roomName]) {
+			// 인원이 풀이면
+			const length = users[roomName].length;
+			if (length === maximum) {
+				// socket.io(socket.id).emit("room_full");
+				return;
+			}
+			// 인원이 풀이 아니면 방에 넣어주고
+			users[roomName].push({ id: socket.id, user: username });
+		} else {
+			// 방이 존재하지 않으면 방을 생성해줌
+			users[roomName] = [{ id : socket.id, user: username }];
+		}
+		// 해당 소켓이 어느 room에 속해있는지 알기위해 저장
+		socketToRoom[socket.id] = roomName;
+
 		socket.join(roomName);
 		// roomName의 모든 소켓들에게 welcome이란 이벤트 전달 --> 프론트에서 받아서 처리함
-		socket.to(roomName).emit("welcome");
+		socket.to(roomName).emit("welcome", socket.id);
 	});
 	// 프론트에서 peer A가 보낸 offer이벤트를 실행함
-	socket.on("offer", (offer, roomName) => {
+	socket.on("offer", (offer, socketId, roomName) => {
 		// 그리고 방의 다른사람들에게 offer를 뿌려줘야겠지
-		socket.to(roomName).emit("offer", offer);
+		socket.to(socketId).emit("offer", offer, socket.id);
 	});
   // 또 이제 peer B가 프론트에서 보낸 answer이벤트 함수를 방의 모든사람에게 실행 또 프론트로 보냄
-	socket.on("answer", (answer, roomName) => {
-		socket.to(roomName).emit("answer", answer);
+	socket.on("answer", (answer, socketId, roomName) => {
+		socket.to(socketId).emit("answer", answer, socket.id);
 	});
   // icecandidate 관련 이벤트 또 만듬 (주고 받아야함)
-  socket.on("ice", (ice, roomName) => {
-    socket.to(roomName).emit("ice", ice);
+  socket.on("ice", (ice, socketId, roomName) => {
+    socket.to(socketId).emit("ice", ice, socket.id);
   });
 });
 
