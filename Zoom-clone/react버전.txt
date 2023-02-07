@@ -1,3 +1,4 @@
 react.js version of this project which removed pug.
 frontend : https://github.com/smarthug/react-zoom
 backend : https://github.com/smarthug/react-zoom-backend
+d
