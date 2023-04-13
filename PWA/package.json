@@ -1,0 +1,9 @@
+{
+  "name": "pwaPractice",
+  "version": "1.0.0",
+  "description": "pwaPractice",
+  "main": "index.js",
+  "repository": "https://github.com/mintcoo/JSpractice.git",
+  "author": "mintcoo",
+  "license": "MIT"
+}
